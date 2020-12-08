@@ -6,7 +6,7 @@ interface IRequest {
 
 interface IResponse {
   barCode: string,
-  amount: number,
+  amount: string,
   expirationDate: string
 }
 
@@ -14,22 +14,21 @@ class ValidarBoletoService {
   constructor() {}
 
   public async run({ barCode }: IRequest): Promise<IResponse> {
-    const isCodeValid = barCode.length === 47;
-
-    const isCodeTooShort = barCode.length < 47;
-    const isCodeTooLong = barCode.length > 47;
+    const isCodeValid = (barCode.length === (47 || 48)) ;
 
     if (!isCodeValid) {
-      if (isCodeTooShort) {
+      if (barCode.length < 47) {
         throw new AppError('Bar Code is too short!');
       }
 
-      if (isCodeTooLong) {
+      if (barCode.length > 48) {
         throw new AppError('Bar Code is too long!');
       }
     }
 
-    const amount = parseFloat(barCode.slice(37, 47));
+    const slicedValue = barCode.slice(barCode.length - 10, barCode.length);
+    const formatedValue = slicedValue.slice(0, 8) + '.' + slicedValue.slice(8, 10);
+    const amount = parseFloat(formatedValue).toFixed(2);
 
     const boleto = {
       barCode,
@@ -42,4 +41,3 @@ class ValidarBoletoService {
 }
 
 export default ValidarBoletoService
-

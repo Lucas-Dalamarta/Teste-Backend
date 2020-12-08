@@ -7,13 +7,17 @@ export default class BoletoController {
     request: Request,
     response: Response,
   ): Promise<Response> {
-    const code = request.params.code;
+    try {
+      const code = request.params.code;
 
-    const validaBoleto = new ValidarBoletoService();
+      const validaBoleto = new ValidarBoletoService();
 
-    const boleto = await validaBoleto.run({ barCode : code });
+      const boleto = await validaBoleto.run({ barCode : code });
 
-    return response.json(boleto);
+      return response.json(boleto);
+    } catch (err) {
+      return response.status(400).json({error: err.message})
+    }
   }
 }
 
