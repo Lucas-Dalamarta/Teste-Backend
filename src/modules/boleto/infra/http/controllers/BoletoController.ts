@@ -8,11 +8,11 @@ export default class BoletoController {
     response: Response,
   ): Promise<Response> {
     try {
-      const code = request.params.code;
+      const typedCode = request.params.code;
 
       const validaBoleto = new ValidarBoletoService();
 
-      const boleto = await validaBoleto.run({ barCode : code });
+      const boleto = await validaBoleto.run({ typedCode });
 
       return response.json(boleto);
     } catch (err) {
