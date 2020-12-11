@@ -74,19 +74,8 @@ class ValidarBoletoService {
 
       const idBanco = campos.campo1.slice(0, 3);
       const idMoeda = campos.campo1.slice(3, 4);
-
       const fatorVencimento = campos.campo5.slice(0, 4);
 
-      //  Calcula data de vencimento
-      const dataBase = new Date(1997, 9, 7); // =>  1997/10/07
-
-      const expirationDate =
-        fatorVencimento !== '0000'
-          ? format(
-              addDays(dataBase, parseInt(fatorVencimento)),
-              'yyyy-MM-dd',
-            ).toString()
-          : undefined;
 
       const codeBar =
         idBanco +
@@ -98,9 +87,23 @@ class ValidarBoletoService {
         composicaoDoCodigoDeBarras.pos25to34 +
         composicaoDoCodigoDeBarras.pos35to44;
 
+      const valorBoleto = (
+        parseFloat(campos.campo5.slice(4, 14)) / 100
+      ).toFixed(2);
+
+      const amount = valorBoleto !== '0.00' ? valorBoleto : undefined;
+
+      const expirationDate =
+        fatorVencimento !== '0000'
+          ? format(
+              addDays(new Date(1997, 9, 7), parseInt(fatorVencimento)),
+              'yyyy-MM-dd',
+            ).toString()
+          : undefined;
+
       return {
         codeBar,
-        amount: '20.00',
+        amount,
         expirationDate,
       };
     } else if (tipoBoleto === 'CONVENIO') {

@@ -64,6 +64,24 @@ describe('ValidarBoletoService', () => {
     );
   });
 
+  it(`(Título) => should return amount`, async () => {
+    const typedCode = '21290001192110001210904475617405975870000002000';
+
+    const response = await validarBoleto.run({ typedCode });
+
+    expect(response?.amount).toBe(
+      '20.00',
+    );
+  });
+
+  it(`(Título) => shouldn't return the amount if it is not informed`, async () => {
+    const typedCode = '21290001192110001210904475617405900000000000000';
+
+    const response = await validarBoleto.run({ typedCode });
+
+    expect(response?.amount).toBeUndefined();
+  });
+
   it(`(Título) => should return the expiration date if it's field is different from 0000`, async () => {
     const typedCode = '21290001192110001210904475617405975870000002000';
 
@@ -94,4 +112,3 @@ describe('ValidarBoletoService', () => {
 //   “barCode”: “21299758700000020000001121100012100447561740”,
 //   “amount”: “20.00”,
 //   “expirationDate”: “2018 - 07 - 16”
-
