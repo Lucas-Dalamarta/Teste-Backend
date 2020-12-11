@@ -8,13 +8,13 @@ describe('ValidarBoletoService', () => {
     validarBoleto = new ValidarBoletoService();
   });
 
-  it("should accept codes 48 characters long (Convênio)", async () => {
+  it('should accept codes 48 characters long (Convênio)', async () => {
     const typedCode = '836000000015460201103138834403604020100240230860';
 
-    const response = await validarBoleto.run({ typedCode })
+    const response = await validarBoleto.run({ typedCode });
 
     expect(response).toHaveProperty('codeBar');
-  })
+  });
 
   it('should accept codes 47 characters long (Título)', async () => {
     const typedCode = '21290001192110001210904475617405975870000002000';
@@ -54,8 +54,32 @@ describe('ValidarBoletoService', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-});
+  it('(Título) => should return codeBar, if code passed is valid', async () => {
+    const typedCode = '21290001192110001210904475617405975870000002000';
 
+    const response = await validarBoleto.run({ typedCode });
+
+    expect(response?.codeBar).toBe(
+      '21299758700000020000001121100012100447561740',
+    );
+  });
+
+  it(`(Título) => should return the expiration date if it's field is different from 0000`, async () => {
+    const typedCode = '21290001192110001210904475617405975870000002000';
+
+    const response = await validarBoleto.run({ typedCode });
+
+    expect(response?.expirationDate).toBe('2018-07-16');
+  });
+
+  it(`(Título) => shouldn't return the expiration date if it's field is 0000`, async () => {
+    const typedCode = '21290001192110001210904475617405900000000002000';
+
+    const response = await validarBoleto.run({ typedCode });
+
+    expect(response?.expirationDate).toBeUndefined();
+  });
+});
 
 //  836000000015460201103138834403604020100240230860 - Convênio
 //  848800000027548301622023012101193681585024111229 - Convênio
@@ -65,9 +89,9 @@ describe('ValidarBoletoService', () => {
 //  21299758700000020000001121100012100447561740 - (44) - Teste
 //  11111111112222222222233333333333455555555555555
 
-
-// 21290001192110001210904475617405975870000002000
+//  21290001192110001210904475617405975870000002000
 
 //   “barCode”: “21299758700000020000001121100012100447561740”,
 //   “amount”: “20.00”,
 //   “expirationDate”: “2018 - 07 - 16”
+
