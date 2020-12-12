@@ -3,9 +3,9 @@ import { retornaSomaDosDigitos } from './retornaSomaDosDigitos';
 describe('retornaSomaDosDigitos', () => {
   it('should return correct sum of the multiple digits', () => {
 
-    const result = retornaSomaDosDigitos(18);
+    const result = retornaSomaDosDigitos(12);
 
-    expect(result).toBe(9);
+    expect(result).toBe(3);
   });
 
   it('should return the same number if it has only one digit', () => {

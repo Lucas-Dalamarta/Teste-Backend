@@ -75,7 +75,7 @@ describe('ValidarBoletoService', () => {
   });
 
   it(`(Título) => shouldn't return the amount if it is not informed`, async () => {
-    const typedCode = '21290001192110001210904475617405900000000000000';
+    const typedCode = '21290001192110001210904475617405175870000000000';
 
     const response = await validarBoleto.run({ typedCode });
 
@@ -91,11 +91,42 @@ describe('ValidarBoletoService', () => {
   });
 
   it(`(Título) => shouldn't return the expiration date if it's field is 0000`, async () => {
-    const typedCode = '21290001192110001210904475617405900000000002000';
+    const typedCode = '21290001192110001210904475617405700000000002000';
 
     const response = await validarBoleto.run({ typedCode });
 
     expect(response?.expirationDate).toBeUndefined();
+  });
+
+  it(`(Título) => shouldn't allow wrong verification digits`, async () => {
+    const invalidDV1 = '21290001102110001210904475617405975870000002000';
+    const invalidDV2 = '21290001192110001210104475617405975870000002000';
+    const invalidDV3 = '21290001192110001210904475617402975870000002000';
+    const invalidDV4 = '21290001192110001210904475617405375870000002000';
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV1,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV2,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV3,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV4,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 });
 

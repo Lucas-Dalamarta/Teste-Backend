@@ -1,6 +1,8 @@
 import { format, addDays } from 'date-fns';
 
 import AppError from '@shared/errors/AppError';
+import { retornaDigitoVerificadorValidado } from './Functions/retornaDigitoVerificadorValidado';
+import { retornaUltimoDigitoValidado } from './Functions/retornaUltimoDigitoValidado';
 
 interface IRequest {
   typedCode: string;
@@ -11,7 +13,6 @@ interface IResponse {
   amount?: string;
   expirationDate?: string;
 }
-
 
 class ValidarBoletoService {
   constructor() {}
@@ -59,10 +60,10 @@ class ValidarBoletoService {
       };
 
       const digitosVerificadores = {
-        digito1: campos.campo1.slice(9, 10), //  9
-        digito2: campos.campo2.slice(10, 11), //  9
-        digito3: campos.campo3.slice(10, 11), //  5
-        digito4: campos.campo4, //  9
+        digito1: parseInt(campos.campo1.slice(9, 10)), //  9
+        digito2: parseInt(campos.campo2.slice(10, 11)), //  9
+        digito3: parseInt(campos.campo3.slice(10, 11)), //  5
+        digito4: parseInt(campos.campo4), //  9
       };
 
       const composicaoDoCodigoDeBarras = {
@@ -76,11 +77,54 @@ class ValidarBoletoService {
       const idMoeda = campos.campo1.slice(3, 4);
       const fatorVencimento = campos.campo5.slice(0, 4);
 
-
-      const codeBar =
+      const codeBarNaoValidado =
         idBanco +
         idMoeda +
-        digitosVerificadores.digito4 +
+        // digitosValidados.digito4 +
+        // digitosVerificadores.digito4 +
+        fatorVencimento +
+        composicaoDoCodigoDeBarras.pos10to19 +
+        composicaoDoCodigoDeBarras.pos20to24 +
+        composicaoDoCodigoDeBarras.pos25to34 +
+        composicaoDoCodigoDeBarras.pos35to44;
+
+      const digitosValidados = {
+        digito1: retornaDigitoVerificadorValidado(campos.campo1.slice(0, 9)), //  2129000112
+        digito2: retornaDigitoVerificadorValidado(campos.campo2.slice(0, 10)), //  21100012109
+        digito3: retornaDigitoVerificadorValidado(campos.campo3.slice(0, 10)), //  04475617405
+        digito4: retornaUltimoDigitoValidado(codeBarNaoValidado),
+      };
+
+      if (digitosValidados.digito1 !== digitosVerificadores.digito1) {
+        throw new AppError(
+          `DV do campo 1 está incorreto! O DV esperado é ${digitosValidados.digito1}, DV recebido é ${digitosVerificadores.digito1}`,
+        );
+      }
+
+      if (digitosValidados.digito2 !== digitosVerificadores.digito2) {
+        throw new AppError(
+          `DV do campo 2 está incorreto! O DV esperado é ${digitosValidados.digito2}, DV recebido é ${digitosVerificadores.digito2}`,
+        );
+      }
+
+      if (digitosValidados.digito3 !== digitosVerificadores.digito3) {
+        throw new AppError(
+          `DV do campo 3 está incorreto! O DV esperado é ${digitosValidados.digito3}, DV recebido é ${digitosVerificadores.digito3}`,
+        );
+      }
+
+      if (digitosValidados.digito4 !== digitosVerificadores.digito4) {
+        throw new AppError(
+          `DV do campo 4 está incorreto! O DV esperado é ${digitosValidados.digito4}, DV recebido é ${digitosVerificadores.digito4}`,
+        );
+      }
+
+      //  2129758700000020000001121100012100447561740
+
+      const codeBarValidado =
+        idBanco +
+        idMoeda +
+        digitosValidados.digito4 +
         fatorVencimento +
         composicaoDoCodigoDeBarras.pos10to19 +
         composicaoDoCodigoDeBarras.pos20to24 +
@@ -102,7 +146,7 @@ class ValidarBoletoService {
           : undefined;
 
       return {
-        codeBar,
+        codeBar: codeBarValidado,
         amount,
         expirationDate,
       };
@@ -119,3 +163,15 @@ class ValidarBoletoService {
 }
 
 export default ValidarBoletoService;
+
+//  ==> Digitos verificadores inválidos
+//  1     =>  21290001102110001210904475617405975870000002000
+//  2     =>  21290001192110001210104475617405975870000002000
+//  3     =>  21290001192110001210904475617402975870000002000
+//  4     =>  21290001192110001210904475617405275870000002000
+//  All   =>  21290001132110001210204475617405975870000002000
+
+//  2129758700000020000001121100012100447561740
+//  21299758700000020000001121100012100447561740
+//  Teste =>  21290001192110001210904475617405975870000002000
+//  Campos =>  2129000113 21100012102 04475617405 9 75870000002000
