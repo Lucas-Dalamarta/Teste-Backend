@@ -3,6 +3,7 @@ import { format, addDays } from 'date-fns';
 import AppError from '@shared/errors/AppError';
 import { retornaDigitoVerificadorValidado } from './Functions/retornaDigitoVerificadorValidado';
 import { retornaUltimoDigitoValidado } from './Functions/retornaUltimoDigitoValidado';
+import { ca } from 'date-fns/locale';
 
 interface IRequest {
   typedCode: string;
@@ -151,11 +152,37 @@ class ValidarBoletoService {
         expirationDate,
       };
     } else if (tipoBoleto === 'CONVENIO') {
-      const codeBar = typedCode;
+      const campos = {
+        campo1: typedCode.slice(0, 12),
+        campo2: typedCode.slice(12, 24),
+        campo3: typedCode.slice(24, 36),
+        campo4: typedCode.slice(36, 48),
+      };
+
+      const camposSemDV = {
+        campo1: campos.campo1.slice(0,11),
+        campo2:campos.campo2.slice(0,11),
+        campo3:campos.campo3.slice(0,11),
+        campo4:campos.campo4.slice(0,11)
+      }
+
+      const codeBar =
+        camposSemDV.campo1 +
+        camposSemDV.campo2 +
+        camposSemDV.campo3 +
+        camposSemDV.campo4;
+
+      const valorBoleto = (
+        parseFloat(
+          camposSemDV.campo1.slice(4, 12) + camposSemDV.campo2.slice(0, 4),
+        ) / 100
+      ).toFixed(2);
+
+      const amount = valorBoleto !== '0.00' ? valorBoleto : undefined;
 
       return {
         codeBar,
-        amount: '20.00',
+        amount,
         expirationDate: '2018-07-16',
       };
     }
@@ -164,6 +191,7 @@ class ValidarBoletoService {
 
 export default ValidarBoletoService;
 
+//  =>  Título
 //  ==> Digitos verificadores inválidos
 //  1     =>  21290001102110001210904475617405975870000002000
 //  2     =>  21290001192110001210104475617405975870000002000
@@ -175,3 +203,28 @@ export default ValidarBoletoService;
 //  21299758700000020000001121100012100447561740
 //  Teste =>  21290001192110001210904475617405975870000002000
 //  Campos =>  2129000113 21100012102 04475617405 9 75870000002000
+
+//  21290001192110001210904475617405975870000002000
+
+//  =>  Convênio
+//  848800000027548301622023012101193681585024111229
+//  817700000000010936599702411310797039001433708318
+
+
+//  846700000017435900240209024050002435842210108119
+//  84670000001435900240200240500024384221010811
+
+//  84670000001435900240200240500024384221010811
+
+
+//  836000000015 460201103138 834403604020 100240230860
+
+//  858900000204000003281833240720183105618666712531
+//  85890000020000003281832407201831061866671253
+
+//  85890000020 00000328183 2407 2018310 61866671253
+
+//  00000 20000.00
+
+
+//  00000 200000;
