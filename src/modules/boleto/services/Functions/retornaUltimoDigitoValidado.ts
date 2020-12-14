@@ -1,6 +1,6 @@
 import { retornaSomaTotalDoCampo } from "./retornaSomaTotalDoCampo";
 
-export function retornaUltimoDigitoValidado(codeBar: string): number {
+export function retornaDVModulo11(codeBar: string): number {
   //  V =>  21299758700000020000001121100012100447561740
   //  SV  =>  2129758700000020000001121100012100447561740;
 

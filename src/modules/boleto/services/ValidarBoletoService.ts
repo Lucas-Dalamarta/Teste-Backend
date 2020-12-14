@@ -1,8 +1,8 @@
 import { format, addDays } from 'date-fns';
 
 import AppError from '@shared/errors/AppError';
-import { retornaDigitoVerificadorValidado } from './Functions/retornaDigitoVerificadorValidado';
-import { retornaUltimoDigitoValidado } from './Functions/retornaUltimoDigitoValidado';
+import { retornaDVModulo10 } from './Functions/retornaDigitoVerificadorValidado';
+import { retornaDVModulo11 } from './Functions/retornaUltimoDigitoValidado';
 import { ca } from 'date-fns/locale';
 
 interface IRequest {
@@ -90,10 +90,10 @@ class ValidarBoletoService {
         composicaoDoCodigoDeBarras.pos35to44;
 
       const digitosValidados = {
-        digito1: retornaDigitoVerificadorValidado(campos.campo1.slice(0, 9)), //  2129000112
-        digito2: retornaDigitoVerificadorValidado(campos.campo2.slice(0, 10)), //  21100012109
-        digito3: retornaDigitoVerificadorValidado(campos.campo3.slice(0, 10)), //  04475617405
-        digito4: retornaUltimoDigitoValidado(codeBarNaoValidado),
+        digito1: retornaDVModulo10(campos.campo1.slice(0, 9)), //  2129000112
+        digito2: retornaDVModulo10(campos.campo2.slice(0, 10)), //  21100012109
+        digito3: retornaDVModulo10(campos.campo3.slice(0, 10)), //  04475617405
+        digito4: retornaDVModulo11(codeBarNaoValidado),
       };
 
       if (digitosValidados.digito1 !== digitosVerificadores.digito1) {

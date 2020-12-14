@@ -2,7 +2,7 @@ import { retornaArrayNumeros } from "./retornaArrayNumeros";
 import { retornaMultiplicacaoDosNumeros } from "./retornaMultiplicacaoDosNumeros";
 import { retornaSomaTotalDoCampo } from './retornaSomaTotalDoCampo';
 
-export function retornaDigitoVerificadorValidado(campo: string): number {
+export function retornaDVModulo10(campo: string): number {
   const arrayDeNumeros = retornaArrayNumeros(campo);
   const numerosMultiplicados = retornaMultiplicacaoDosNumeros(arrayDeNumeros);
   const somaTotalDoCampo = retornaSomaTotalDoCampo(numerosMultiplicados);
