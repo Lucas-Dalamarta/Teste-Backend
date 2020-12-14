@@ -61,10 +61,10 @@ class ValidarBoletoService {
       };
 
       const digitosVerificadores = {
-        digito1: parseInt(campos.campo1.slice(9, 10)), //  9
-        digito2: parseInt(campos.campo2.slice(10, 11)), //  9
-        digito3: parseInt(campos.campo3.slice(10, 11)), //  5
-        digito4: parseInt(campos.campo4), //  9
+        digito1: Number(campos.campo1.slice(9, 10)), //  9
+        digito2: Number(campos.campo2.slice(10, 11)), //  9
+        digito3: Number(campos.campo3.slice(10, 11)), //  5
+        digito4: Number(campos.campo4), //  9
       };
 
       const composicaoDoCodigoDeBarras = {
@@ -141,7 +141,7 @@ class ValidarBoletoService {
       const expirationDate =
         fatorVencimento !== '0000'
           ? format(
-              addDays(new Date(1997, 9, 7), parseInt(fatorVencimento)),
+              addDays(new Date(1997, 9, 7), Number(fatorVencimento)),
               'yyyy-MM-dd',
             ).toString()
           : undefined;

@@ -6,7 +6,7 @@ export function retornaArrayNumeros(campo: string): number[] {
   let arrayNumeros = [];
 
   for (var i = 0; i < campoArray.length; i++) {
-    arrayNumeros[i] = parseInt(campoArray[i]);
+    arrayNumeros[i] = Number(campoArray[i]);
   }
 
   return arrayNumeros;
