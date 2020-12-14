@@ -1,4 +1,4 @@
-import { retornaDVModulo10 } from './retornaDigitoVerificadorValidado';
+import { retornaDVModulo10 } from './retornaDVModulo10';
 
 describe('retornaDigitoVerificadorValidado', () => {
   it('should return correct sum of the digits', () => {

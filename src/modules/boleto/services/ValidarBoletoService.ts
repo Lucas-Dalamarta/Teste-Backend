@@ -1,8 +1,8 @@
 import { format, addDays } from 'date-fns';
 
 import AppError from '@shared/errors/AppError';
-import { retornaDVModulo10 } from './Functions/retornaDigitoVerificadorValidado';
-import { retornaDVModulo11 } from './Functions/retornaUltimoDigitoValidado';
+import { retornaDVModulo10 } from './Functions/retornaDVModulo10';
+import { retornaDVModulo11Titulo } from './Functions/retornaDVModulo11Titulo';
 import { ca } from 'date-fns/locale';
 
 interface IRequest {
@@ -93,7 +93,7 @@ class ValidarBoletoService {
         digito1: retornaDVModulo10(campos.campo1.slice(0, 9)), //  2129000112
         digito2: retornaDVModulo10(campos.campo2.slice(0, 10)), //  21100012109
         digito3: retornaDVModulo10(campos.campo3.slice(0, 10)), //  04475617405
-        digito4: retornaDVModulo11(codeBarNaoValidado),
+        digito4: retornaDVModulo11Titulo(codeBarNaoValidado),
       };
 
       if (digitosValidados.digito1 !== digitosVerificadores.digito1) {
