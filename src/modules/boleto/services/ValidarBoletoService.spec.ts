@@ -64,24 +64,24 @@ describe('ValidarBoletoService', () => {
       '21299758700000020000001121100012100447561740',
     );
 
-    typedCode = '858900000204000003281833240720183105618666712531';
+    typedCode = '817700000000010936599702411310797039001433708318';
     response = await validarBoleto.run({ typedCode });
     expect(response?.codeBar).toBe(
-      '85890000020000003281832407201831061866671253',
+      '81770000000010936599704113107970300143370831',
     );
   });
 
   it(`should return amount`, async () => {
-    let typedCode = ''
-    let response = undefined
+    let typedCode = '';
+    let response = undefined;
 
     typedCode = '21290001192110001210904475617405975870000002000';
     response = await validarBoleto.run({ typedCode });
     expect(response?.amount).toBe('20.00');
 
-    typedCode = '858900000204000003281833240720183105618666712531';
+    typedCode = '817700000000010936599702411310797039001433708318';
     response = await validarBoleto.run({ typedCode });
-    expect(response?.amount).toBe('2000.00');
+    expect(response?.amount).toBe('1.09');
   });
 
   it(`(Título) => shouldn't return the amount if it is not informed`, async () => {
@@ -114,6 +114,9 @@ describe('ValidarBoletoService', () => {
     const invalidDV3 = '21290001192110001210904475617402975870000002000';
     const invalidDV4 = '21290001192110001210904475617405375870000002000';
 
+    const invalidDVConvenio =
+      '836000000025460201103138834403604020100240230860';
+
     await expect(
       validarBoleto.run({
         typedCode: invalidDV1,
@@ -138,5 +141,42 @@ describe('ValidarBoletoService', () => {
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
-});
 
+  it(`(Cônvenio) => shouldn't allow wrong verification digits`, async () => {
+    const invalidDV1 = '836000000025460201103138834403604020100240230860';
+    const invalidDV2 = '836900000024460201103137834403604020100240230860';
+    const invalidDV3 = '836900000024460201103138834403604021100240230860';
+    const invalidDV4 = '836900000024460201103138834403604020000240230860';
+    const invalidDVGeral = '836000000023460201103138834403604020100240230860';
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV1,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV2,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV3,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDV4,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    await expect(
+      validarBoleto.run({
+        typedCode: invalidDVGeral,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+});

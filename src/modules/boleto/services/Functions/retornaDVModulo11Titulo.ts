@@ -1,12 +1,8 @@
+import { retornaArrayNumeros } from "./retornaArrayNumeros";
 import { retornaSomaTotalDoCampo } from "./retornaSomaTotalDoCampo";
 
 export function retornaDVModulo11Titulo(codeBar: string): number {
-  const codeBarSplitted = codeBar.split('');
-  let codeBarNumbers = [];
-
-  for (let i = 0; i < codeBarSplitted.length; i++) {
-    codeBarNumbers[i] = Number(codeBarSplitted[i]);
-  }
+  let codeBarNumbers = retornaArrayNumeros(codeBar);
 
   let multiplicador = 9;  //  Vária entre intervalos de 2 - 9
   let contador = codeBarNumbers.length
